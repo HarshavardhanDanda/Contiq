@@ -1,0 +1,178 @@
+{
+  "user": [
+    {
+      "id": 1,
+      "username": "Ryan Mathew",
+      "email": "ryan01@gmail.com",
+      "password": "Ryan@123",
+      "created_at": "2023-10-25 9:00:00",
+      "updated_at": "2023-10-25 10:30:00"
+    },
+    {
+      "id": 2,
+      "username": "John Doe",
+      "email": "john01@gmail.com",
+      "password": "John@123",
+      "created_at": "2023-10-25 11:00:00",
+      "updated_at": "2023-10-25 11:24:40"
+    },
+    {
+      "id": 3,
+      "username": "Amit",
+      "email": "amit01@gmail.com",
+      "password": "Amit@123",
+      "created_at": "2023-10-25 11:32:00",
+      "updated_at": "2023-10-25 11:35:00"
+    },
+    {
+      "id": 4,
+      "username": "Ross Gener",
+      "email": "ross01@gmail.com",
+      "password": "Ross@123",
+      "created_at": "2023-10-25 11:48:00",
+      "updated_at": "2023-10-25 12:01:00"
+    },
+    {
+      "username": "Harsha",
+      "email": "harsha@gmail.com",
+      "password": "Harsha@123",
+      "id": 5
+    },
+    {
+      "username": "Mani",
+      "email": "mani@gmail.com",
+      "password": "Mani@123",
+      "id": 6
+    },
+    {
+      "username": "abcdd",
+      "email": "abcd@gmail.com",
+      "password": "Abcd@1234",
+      "id": 7
+    },
+    {
+      "username": "harsha",
+      "email": "harsha123@gmail.com",
+      "password": "Harsha@123",
+      "id": 8
+    }
+  ],
+  "file": [
+    {
+      "id": 1,
+      "name": "Company agreement.pdf",
+      "type": "pdf",
+      "created_at": "2023-10-15 11:00:00",
+      "updated_at": "2023-10-15 11:40:00",
+      "uploaded_by": 1
+    },
+    {
+      "id": 2,
+      "name": "Company profile.pdf",
+      "type": "pdf",
+      "created_at": "2023-10-20 11:10:00",
+      "updated_at": "2023-10-20 11:50:00",
+      "uploaded_by": 5
+    },
+    {
+      "id": 3,
+      "name": "User agreement.pdf",
+      "type": "pdf",
+      "created_at": "2023-10-25 11:00:00",
+      "updated_at": "2023-10-25 11:40:00",
+      "uploaded_by": 5
+    },
+    {
+      "name": "airtelbillaugust.pdf",
+      "type": "pdf",
+      "created_at": "2023-11-02 15:04:26",
+      "updated_at": "2023-11-02 15:04:26",
+      "uploaded_by": 5,
+      "id": 4
+    },
+    {
+      "name": "A_-_Container_Properties.pdf",
+      "type": "pdf",
+      "created_at": "2023-11-02 15:06:48",
+      "updated_at": "2023-11-02 15:06:48",
+      "uploaded_by": 5,
+      "id": 5
+    },
+    {
+      "name": "airtelbillaugust.pdf",
+      "type": "pdf",
+      "created_at": "2023-11-02 15:11:38",
+      "updated_at": "2023-11-02 15:11:38",
+      "uploaded_by": 5,
+      "id": 6
+    },
+    {
+      "name": "airtelbillaugust.pdf",
+      "type": "airtelbillaugust.pdf",
+      "created_at": "2023-11-02 15:23:30",
+      "updated_at": "2023-11-02 15:23:30",
+      "uploaded_by": 5,
+      "id": 7
+    },
+    {
+      "name": "airtelbillaugust.pdf",
+      "type": "airtelbillaugust.pdf",
+      "created_at": "2023-11-02 17:01:44",
+      "updated_at": "2023-11-02 17:01:44",
+      "uploaded_by": 5,
+      "id": 8
+    }
+  ],
+  "notification": [
+    {
+      "id": 1,
+      "file_id": 1,
+      "user_id": 5,
+      "is_read": true,
+      "uploaded_by": 1,
+      "created_at": "2023-10-25 11:00:00",
+      "updated_at": "2023-10-25 11:40:00",
+      "type": "upload"
+    },
+    {
+      "id": 2,
+      "file_id": 2,
+      "user_id": 5,
+      "is_read": false,
+      "uploaded_by": 1,
+      "created_at": "2023-10-25 11:10:00",
+      "updated_at": "2023-10-25 11:50:00",
+      "type": "upload"
+    },
+    {
+      "id": 3,
+      "file_id": 3,
+      "user_id": 5,
+      "is_read": false,
+      "uploaded_by": 2,
+      "created_at": "2023-10-25 11:00:00",
+      "updated_at": "2023-10-25 11:40:00",
+      "type": "upload"
+    },
+    {
+      "id": 4,
+      "file_id": 3,
+      "user_id": 5,
+      "is_read": false,
+      "uploaded_by": 2,
+      "created_at": "2023-10-25 11:00:00",
+      "updated_at": "2023-10-25 11:40:00",
+      "type": "request access"
+    },
+    {
+      "id": 5,
+      "file_id": 2,
+      "user_id": 5,
+      "is_read": false,
+      "uploaded_by": 2,
+      "created_at": "2023-10-25 11:10:00",
+      "updated_at": "2023-10-25 11:50:00",
+      "type": "delete"
+    }
+  ]
+}

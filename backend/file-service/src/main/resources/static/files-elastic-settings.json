@@ -1,0 +1,28 @@
+{
+  "index": {
+    "analysis": {
+      "analyzer": {
+        "custom_text_analyzer": {
+          "type": "custom",
+          "tokenizer": "text_ngram_tokenizer",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "ngram_text_analyzer": {
+          "type": "custom",
+          "tokenizer": "text_ngram_tokenizer"
+        }
+      },
+      "tokenizer": {
+        "text_ngram_tokenizer": {
+          "type": "ngram",
+          "min_gram": 2,
+          "max_gram": 20
+        }
+      }
+    },
+    "max_ngram_diff": 18
+  }
+}

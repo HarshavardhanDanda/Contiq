@@ -1,0 +1,421 @@
+deployments:
+  - name: mockserver
+    labels:
+      app: mockserver
+      project: bootcamp127
+    container:
+      name: mockserver-pod
+      image: 
+        repository: node
+        tag: 16-alpine
+      ports:
+        containerPort: 8080
+      readinessProbe:
+        httpGet:
+          port: 8080
+        initialDelaySeconds: 5
+        periodSeconds: 2
+      livenessProbe:
+        httpGet:
+          port: 8080
+        initialDelaySeconds: 10
+        periodSeconds: 30
+      command:
+        - "sh"
+        - "-c"
+      args:
+        - "npm i -g json-server; cp /app/db.json /home/db.json; json-server -w /home/db.json -p 8080 -H 0.0.0.0"
+      volumeMounts:
+        - name:  mock-data
+          mountPath: /app
+    volumes:
+      - name: mock-data
+        configMap:
+          name:  mockserver-data
+          optional: false
+    imagePullSecrets:
+      - name: my-docker-secret
+
+
+  - name: database
+    labels:
+      app: database
+      project: bootcamp127
+    container:
+      name: database-pod
+      image: 
+        repository: mysql
+        tag: latest
+      ports:
+        containerPort: 3306
+
+      envFrom:
+        - secretRef:
+            name: mysql-secret
+      # readinessProbe:
+      #   httpGet:
+      #     port: 3306
+      #   initialDelaySeconds: 5
+      #   periodSeconds: 5
+      # livenessProbe:
+      #   httpGet:
+      #     port: 3306
+      #   initialDelaySeconds: 30
+      #   periodSeconds: 30
+      volumeMounts:
+        - name:  database-config
+          mountPath: /etc/mysql/conf.d/
+        - name:  persist-data
+          mountPath: /var/lib/mysql
+
+    volumes:
+      - name: database-config
+        configMap:
+          name: mysql-config
+          optional: false
+      - name: persist-data
+        persistentVolumeClaim:
+          claimName: database
+      
+
+  - name: frontend
+    labels:
+      app: frontend
+      project: bootcamp127
+    container:
+      name: frontend-pod
+      image: 
+        repository: ghcr.io/ishtiaqsamdani007/bc127-fe
+        tag: latest
+      ports:
+        containerPort: 80
+      # readinessProbe:
+      #   port: 80
+      #   path: /
+      #   initialDelaySeconds: 3
+      #   periodSeconds: 3
+      # livenessProbe:
+      #   port: 80
+      #   path: /
+      #   initialDelaySeconds: 30
+      #   periodSeconds: 30
+    imagePullSecrets:
+      - name: my-docker-secret
+
+#   - name: api-gateway
+#     labels:
+#       app: api-gateway
+#       project: bootcamp127
+#     container:
+#       name: api-gateway-container
+#       image:
+#         repository: ghcr.io/ishtiaqsamdani007/bc-127-backend-api-gateway
+#         tag: latest  # Replace with the specific image tag
+#       ports:
+#         containerPort: 9191
+#       env:
+#         - name: EUREKA_INSTANCE_HOSTNAME
+#           value: api-gateway
+#         - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+#           value: https://bc127be.spcluster.tk/eureka/
+#         - name: DATABASE_USERNAME
+#           value: root
+#         - name: DATABASE_PASSWORD
+#           value: Bootcamp@127!
+#         - name: DATABASE_URL
+#           value: jdbc:mysql://18.188.13.120:30001/Checkr
+#         - name: SECRET_ID
+#           value: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
+#         # - name: SPRING_DATASOURCE_URL
+#         #   value: jdbc:mysql://18.191.127.159:30001/seeder
+#         # - name: SPRING_DATASOURCE_PASSWORD
+#         #   value: Bootcamp@127!
+#         # - name: SPRING_FLYWAY_ENABLED
+#         #   value: "false"
+#     imagePullSecrets:
+#       - name: my-docker-secret
+
+
+  - name: api-gateway
+    labels:
+      app: api-gateway
+      project: bootcamp127
+    container:
+      name: api-gateway-container
+      image:
+        repository: ghcr.io/ishtiaqsamdani007/bc-127-backend-api-gateway
+        tag: latest  # Replace with the specific image tag
+      ports:
+        containerPort: 9000
+      env:
+        - name: EUREKA_INSTANCE_HOSTNAME
+          value: api-gateway
+        - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+          value: https://bc127be.spcluster.tk/eureka/
+        
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://18.217.24.174:30001/contiq?serverTimezone=UTC
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: Bootcamp@127!
+        - name: SPRING_FLYWAY_ENABLED
+          value: false
+
+        - name: ELASTICSEARCH_TRUSTSTORE_PATH
+          value: /truststore/truststore.jks
+
+        # - name: GOOGLE_APPLICATION_CREDENTIALS
+        #   value: /contiq/serviceAccount.json
+    imagePullSecrets:
+      - name: my-docker-secret
+
+  - name: file-service
+    labels:
+      app: file-service
+      project: bootcamp127
+    container:
+      name: file-service-container
+      image:
+        repository: ghcr.io/ishtiaqsamdani007/bc-127-backend-file-service
+        tag: latest  # Replace with the specific image tag
+      ports:
+        containerPort: 9003
+      env:
+        - name: EUREKA_INSTANCE_HOSTNAME
+          value: file-service
+        - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+          value: https://bc127be.spcluster.tk/eureka/
+        
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://18.217.24.174:30001/contiq?serverTimezone=UTC
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: Bootcamp@127!
+        - name: SPRING_FLYWAY_ENABLED
+          value: false
+
+        - name: ELASTICSEARCH_TRUSTSTORE_PATH
+          value: /truststore/truststore127.jks
+
+        # - name: GOOGLE_APPLICATION_CREDENTIALS
+        #   value: /contiq/serviceAccount.json
+      volumeMounts:
+        - name: truststore
+          mountPath: /truststore
+    volumes:
+      - name: truststore
+        configMap:
+          name: truststore
+          optional: false
+    imagePullSecrets:
+      - name: my-docker-secret
+
+  - name: notification-service
+    labels:
+      app: notification-service
+      project: bootcamp127
+    container:
+      name: notification-service-container
+      image:
+        repository: ghcr.io/ishtiaqsamdani007/bc-127-backend-notification-service
+        tag: latest  # Replace with the specific image tag
+      ports:
+        containerPort: 9002
+      env:
+        - name: EUREKA_INSTANCE_HOSTNAME
+          value: notification-service
+        - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+          value: https://bc127be.spcluster.tk/eureka/
+        
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://18.217.24.174:30001/contiq?serverTimezone=UTC
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: Bootcamp@127!
+        - name: SPRING_FLYWAY_ENABLED
+          value: false
+
+        - name: ELASTICSEARCH_TRUSTSTORE_PATH
+          value: /truststore/truststore.jks
+
+        # - name: GOOGLE_APPLICATION_CREDENTIALS
+        #   value: /contiq/serviceAccount.json
+    imagePullSecrets:
+      - name: my-docker-secret
+
+  - name: service-registry
+    labels:
+      app: service-registry
+      project: bootcamp127
+    container:
+      name: service-registry-container
+      image:
+        repository: ghcr.io/ishtiaqsamdani007/bc-127-backend-service-registry
+        tag: latest  # Replace with the specific image tag
+      ports:
+        containerPort: 8761
+      env:
+        - name: EUREKA_INSTANCE_HOSTNAME
+          value: service-registry
+        - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+          value: https://bc127be.spcluster.tk/eureka/
+        
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://18.217.24.174:30001/contiq?serverTimezone=UTC
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: Bootcamp@127!
+        - name: SPRING_FLYWAY_ENABLED
+          value: false
+
+        - name: ELASTICSEARCH_TRUSTSTORE_PATH
+          value: /truststore/truststore.jks
+
+        # - name: GOOGLE_APPLICATION_CREDENTIALS
+        #   value: /contiq/serviceAccount.json
+    imagePullSecrets:
+      - name: my-docker-secret
+
+  - name: user-service
+    labels:
+      app: user-service
+      project: bootcamp127
+    container:
+      name: user-service-container
+      image:
+        repository: ghcr.io/ishtiaqsamdani007/bc-127-backend-user-service
+        tag: latest  # Replace with the specific image tag
+      ports:
+        containerPort: 9001
+      env:
+        - name: EUREKA_INSTANCE_HOSTNAME
+          value: user-service
+        - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+          value: https://bc127be.spcluster.tk/eureka/
+        
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://18.217.24.174:30001/contiq?serverTimezone=UTC
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: Bootcamp@127!
+        - name: SPRING_FLYWAY_ENABLED
+          value: false
+
+        - name: ELASTICSEARCH_TRUSTSTORE_PATH
+          value: /truststore/truststore.jks
+
+        # - name: GOOGLE_APPLICATION_CREDENTIALS
+        #   value: /contiq/serviceAccount.json
+    imagePullSecrets:
+      - name: my-docker-secret
+
+
+services:
+  - name: mockserver
+    labels:
+      app: mockserver
+      project: bootcamp127
+    port: 8080
+    targetPort: 8080
+
+  - name: database
+    type: NodePort
+    labels:
+      app: database
+      project: bootcamp127
+    port: 3306
+    targetPort: 3306
+    nodePort: 30001
+
+
+  - name: frontend
+    labels:
+      app: frontend
+      project: bootcamp127
+    port: 80
+    targetPort: 80
+
+
+  - name: api-gateway
+    labels:
+      app: api-gateway
+      project: bootcamp127
+    port: 9000
+    targetPort: 9000
+
+  - name: file-service
+    labels:
+      app: file-service
+      project: bootcamp127
+    port: 9003
+    targetPort: 9003
+
+  - name: notification-service
+    labels:
+      app: notification-service
+      project: bootcamp127
+    port: 9002
+    targetPort: 9002
+
+  - name: service-registry
+    labels:
+      app: service-registry
+      project: bootcamp127
+    port: 8761
+    targetPort: 8761
+
+  - name: user-service
+    labels:
+      app: user-service
+      project: bootcamp127
+    port: 9001
+    targetPort: 9001  
+
+ingress:
+  name: ingress-bc-127
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  ingressClassName: nginx
+  rules:
+    - host: bc127ms.spcluster.tk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            serviceName: mockserver
+            servicePort: 8080
+    - host: bc127fe.spcluster.tk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            serviceName: frontend
+            servicePort: 80
+    - host: bc127be.spcluster.tk
+      http:
+        paths:
+          - path: /$
+            pathType: Exact
+            serviceName: service-registry
+            servicePort: 8761
+          - path: /eureka
+            pathType: Prefix
+            serviceName: service-registry
+            servicePort: 8761
+          - path: /
+            pathType: Prefix
+            serviceName: api-gateway
+            servicePort: 9000
+
+
+pvc:
+  name: database
+  storageClassName: gp2
+  storageSize: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+
+
+  
+configmaps:
+  - name:  mysql-config
+    file: config.cnf
+    content: |
+      [mysqld]
+      max_connections=4000

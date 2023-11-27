@@ -1,0 +1,11 @@
+.long-dashed-border {
+    border: 1px solid transparent;
+
+    border-image: linear-gradient(to right,
+            black 0%, black 50%,
+            transparent 50%, transparent 100%) 1 / 1 / 0 stretch;
+
+
+    padding: 20px;
+    margin: 20px;
+}
